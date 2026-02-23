@@ -96,8 +96,12 @@
                                 Buka WhatsApp di HP → Ketuk menu (titik tiga) → Pilih <strong>Perangkat Tertaut</strong>
                                 → Scan QR code di atas
                             </p>
-                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-500 text-center">QR akan diperbarui
-                                otomatis setiap 20 detik. Setelah scan berhasil, halaman akan mendeteksi koneksi.</p>
+                            <p class="mt-2 text-xs text-gray-500 dark:text-gray-500 text-center">QR diperbarui otomatis setiap 15 detik. Setelah scan berhasil, koneksi terdeteksi dalam beberapa detik.</p>
+                            <div class="mt-3 flex justify-center">
+                                <button type="button" id="btn-reload-qr" class="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300">
+                                    Muat ulang QR
+                                </button>
+                            </div>
                         </div>
                     @endif
 
@@ -132,6 +136,12 @@
                 var qrImage = document.getElementById('qr-image');
                 var qrLoading = document.getElementById('qr-loading');
                 var qrError = document.getElementById('qr-error');
+                var btnReload = document.getElementById('btn-reload-qr');
+                var maxRetries = 3;
+                var retryDelay = 2000;
+                var refreshInterval = 15000;
+                var pollInterval = 3000;
+                var statusCheckInterval;
 
                 function showLoading() {
                     if (qrLoading) qrLoading.style.display = 'flex';
@@ -154,7 +164,8 @@
                     if (qrError) qrError.style.display = 'block';
                 }
 
-                function loadQRCode() {
+                function loadQRCode(retryCount) {
+                    retryCount = retryCount || 0;
                     showLoading();
                     var url = '{{ route('client.whatsapp.qr-image') }}?t=' + Date.now();
                     var img = new Image();
@@ -162,39 +173,49 @@
                         showQr(url);
                     };
                     img.onerror = function() {
-                        showError();
+                        if (retryCount < maxRetries - 1) {
+                            setTimeout(function() { loadQRCode(retryCount + 1); }, retryDelay);
+                        } else {
+                            showError();
+                        }
                     };
                     img.src = url;
                 }
 
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', loadQRCode);
-                } else {
-                    loadQRCode();
+                function startQRRefresh() {
+                    if (document.getElementById('qr-container') && document.getElementById('qr-image').style.display === 'block') {
+                        loadQRCode(0);
+                    }
                 }
 
-                setInterval(loadQRCode, 20000);
-            })();
-        @elseif ($status['success'] && !$status['connected'])
-            (function() {
-                var checkInterval = setInterval(function() {
+                function checkStatus() {
                     fetch('{{ route('client.whatsapp.status') }}', {
-                            headers: {
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        })
-                        .then(function(r) {
-                            return r.json();
-                        })
-                        .then(function(data) {
-                            if (data && data.connected) {
-                                clearInterval(checkInterval);
-                                location.reload();
-                            }
-                        })
-                        .catch(function() {});
-                }, 5000);
+                        headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        if (data && data.connected) {
+                            if (statusCheckInterval) clearInterval(statusCheckInterval);
+                            document.body.insertAdjacentHTML('beforeend', '<div id="connected-toast" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"><div class="bg-white dark:bg-gray-800 rounded-lg px-6 py-4 shadow-xl text-green-600 dark:text-green-400 font-medium">Terhubung! Memuat ulang...</div></div>');
+                            setTimeout(function() { location.reload(); }, 800);
+                        }
+                    })
+                    .catch(function() {});
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        loadQRCode(0);
+                        statusCheckInterval = setInterval(checkStatus, pollInterval);
+                        setInterval(startQRRefresh, refreshInterval);
+                        if (btnReload) btnReload.addEventListener('click', function() { loadQRCode(0); });
+                    });
+                } else {
+                    loadQRCode(0);
+                    statusCheckInterval = setInterval(checkStatus, pollInterval);
+                    setInterval(startQRRefresh, refreshInterval);
+                    if (btnReload) btnReload.addEventListener('click', function() { loadQRCode(0); });
+                }
             })();
         @endif
     </script>

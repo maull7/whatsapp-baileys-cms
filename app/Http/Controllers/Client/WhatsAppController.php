@@ -46,12 +46,15 @@ class WhatsAppController extends Controller
         $result = $this->api->getQrImage($client);
 
         if (! $result['success']) {
-            return response()->json(['message' => $result['error'] ?? 'Gagal mengambil QR'], 502);
+            return response()->json(['message' => $result['error'] ?? 'Gagal mengambil QR'], 503)
+                ->header('Cache-Control', 'no-store, no-cache, must-revalidate')
+                ->header('Retry-After', '2');
         }
 
         return response($result['body'])
             ->header('Content-Type', $result['contentType'] ?? 'image/png')
-            ->header('Cache-Control', 'no-store, no-cache, must-revalidate');
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache');
     }
 
     public function logout(): RedirectResponse
