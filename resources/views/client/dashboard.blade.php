@@ -1,108 +1,87 @@
 <x-client-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            Dashboard
-        </h2>
-    </x-slot>
+    <x-slot name="header">Dashboard</x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
-                <div class="mb-4 px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            <div class="mb-6 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-lg shadow-lg p-6 text-white">
-                <h3 class="text-2xl font-bold mb-2">Selamat Datang, {{ $user->name }}!</h3>
-                <p class="text-emerald-100">Client: {{ $client->name }}</p>
-                <div class="mt-4 p-4 bg-white/10 rounded-lg">
-                    <p class="text-sm font-semibold mb-1">API Key Anda:</p>
-                    <code class="text-xs bg-gray-900/30 px-3 py-2 rounded block break-all">{{ $user->api_key }}</code>
-                </div>
+    <div class="max-w-4xl space-y-5">
+        @if (session('success'))
+            <div class="px-4 py-3 rounded-lg bg-green-50 dark:bg-green-950/50 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 text-sm">
+                {{ session('success') }}
             </div>
+        @endif
 
-            <div class="mb-6 px-4 py-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200">
-                <p class="font-semibold mb-1">⚠️ Campaign Terjadwal</p>
-                <p class="text-sm">Campaign terjadwal akan terkirim otomatis sesuai jam tanpa perlu reload halaman. Pastikan scheduler Laravel berjalan:</p>
-                <ul class="mt-2 text-sm list-disc list-inside space-y-1">
-                    <li><strong>Development:</strong> Jalankan <code class="bg-amber-100 dark:bg-amber-900/50 px-1 rounded">php artisan schedule:work</code> di terminal terpisah</li>
-                    <li><strong>Production:</strong> Setup cron: <code class="bg-amber-100 dark:bg-amber-900/50 px-1 rounded">* * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1</code></li>
-                </ul>
+        <section class="p-5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+            <h2 class="text-base font-semibold text-slate-800 dark:text-slate-100">Selamat datang, {{ $user->name }}</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ $client->name }}</p>
+            <div class="mt-4 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700">
+                <p class="text-xs text-slate-500 dark:text-slate-400 mb-1">API Key</p>
+                <code class="text-xs text-slate-700 dark:text-slate-300 break-all font-mono">{{ $user->api_key }}</code>
             </div>
+        </section>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <div class="flex items-center">
-                            <div class="flex-shrink-0">
-                                <svg class="h-12 w-12 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                                </svg>
-                            </div>
-                            <div class="ml-5 w-0 flex-1">
-                                <dl>
-                                    <dt class="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
-                                        Total Campaign
-                                    </dt>
-                                    <dd class="text-3xl font-semibold text-gray-900 dark:text-gray-100">
-                                        {{ $totalBroadcasts }}
-                                    </dd>
-                                </dl>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <a href="{{ route('client.bantuan') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300 text-sm transition-colors">
+            <span class="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </span>
+            <span>Panduan penggunaan aplikasi</span>
+        </a>
 
-                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6">
-                        <a href="{{ route('client.broadcasts.create') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-emerald-700 focus:bg-emerald-700 active:bg-emerald-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition ease-in-out duration-150">
-                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                            </svg>
-                            Buat Campaign
-                        </a>
-                    </div>
-                </div>
+        <section class="px-4 py-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50">
+            <p class="font-medium text-amber-800 dark:text-amber-200 text-sm">Campaign terjadwal</p>
+            <p class="text-sm text-amber-700 dark:text-amber-300 mt-0.5">Campaign terkirim otomatis sesuai jadwal. Pastikan scheduler berjalan:</p>
+            <ul class="mt-2 text-sm text-amber-700 dark:text-amber-300 space-y-0.5 list-disc list-inside">
+                <li>Development: <code class="bg-amber-100 dark:bg-amber-900/50 px-1 rounded text-xs">php artisan schedule:work</code></li>
+                <li>Production: cron <code class="bg-amber-100 dark:bg-amber-900/50 px-1 rounded text-xs">* * * * * cd /path && php artisan schedule:run</code></li>
+            </ul>
+        </section>
+
+        <div class="flex flex-wrap items-center gap-4">
+            <div class="px-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 min-w-[140px]">
+                <p class="text-xs text-slate-500 dark:text-slate-400">Total Campaign</p>
+                <p class="text-xl font-semibold text-slate-800 dark:text-slate-100 mt-0.5">{{ $totalBroadcasts }}</p>
             </div>
-
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <h3 class="text-lg font-semibold mb-4">Broadcast Terbaru</h3>
-                    @if ($recentBroadcasts->count() > 0)
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                                <thead>
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nama</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Jadwal</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                                    @foreach ($recentBroadcasts as $broadcast)
-                                        <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">{{ $broadcast->name ?: 'Broadcast #'.$broadcast->id }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                <span class="px-2 py-1 text-xs rounded-full {{ $broadcast->status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : ($broadcast->status === 'processing' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400' : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300') }}">
-                                                    {{ ucfirst($broadcast->status) }}
-                                                </span>
-                                            </td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">{{ $broadcast->scheduled_at ? $broadcast->scheduled_at->format('d M Y H:i') : '-' }}</td>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm">
-                                                <a href="{{ route('client.broadcasts.show', $broadcast) }}" class="text-emerald-600 hover:text-emerald-900 dark:text-emerald-400 dark:hover:text-emerald-300">Detail</a>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @else
-                        <p class="text-gray-500 dark:text-gray-400">Belum ada broadcast.</p>
-                    @endif
-                </div>
-            </div>
+            <a href="{{ route('client.broadcasts.create') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-slate-800 dark:bg-slate-100 text-white dark:text-slate-900 text-sm font-medium hover:bg-slate-700 dark:hover:bg-slate-200 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Buat Campaign
+            </a>
         </div>
+
+        <section class="rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 overflow-hidden">
+            <div class="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+                <h3 class="text-sm font-semibold text-slate-800 dark:text-slate-100">Broadcast terbaru</h3>
+            </div>
+            <div class="p-4">
+                @if ($recentBroadcasts->count() > 0)
+                    <div class="overflow-x-auto -mx-4 sm:mx-0">
+                        <table class="min-w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-200 dark:border-slate-700">
+                                    <th class="px-4 py-2.5 text-left font-medium text-slate-500 dark:text-slate-400">Nama</th>
+                                    <th class="px-4 py-2.5 text-left font-medium text-slate-500 dark:text-slate-400">Status</th>
+                                    <th class="px-4 py-2.5 text-left font-medium text-slate-500 dark:text-slate-400">Jadwal</th>
+                                    <th class="px-4 py-2.5 text-left font-medium text-slate-500 dark:text-slate-400">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+                                @foreach ($recentBroadcasts as $broadcast)
+                                    <tr>
+                                        <td class="px-4 py-2.5 font-medium text-slate-800 dark:text-slate-100">{{ $broadcast->name ?: 'Broadcast #'.$broadcast->id }}</td>
+                                        <td class="px-4 py-2.5">
+                                            <span class="inline-flex px-2 py-0.5 text-xs font-medium rounded {{ $broadcast->status === 'completed' ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400' : ($broadcast->status === 'processing' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-400' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300') }}">
+                                                {{ ucfirst($broadcast->status) }}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-2.5 text-slate-600 dark:text-slate-400">{{ $broadcast->scheduled_at ? $broadcast->scheduled_at->format('d M Y H:i') : '–' }}</td>
+                                        <td class="px-4 py-2.5">
+                                            <a href="{{ route('client.broadcasts.show', $broadcast) }}" class="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-medium">Detail</a>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @else
+                    <p class="text-slate-500 dark:text-slate-400 text-sm py-2">Belum ada broadcast.</p>
+                @endif
+            </div>
+        </section>
     </div>
 </x-client-layout>

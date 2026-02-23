@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\ClientController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Client\BantuanController;
 use App\Http\Controllers\Client\BroadcastController as ClientBroadcastController;
 use App\Http\Controllers\Client\ContactController as ClientContactController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
@@ -64,6 +65,8 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
 
     Route::get('broadcasts/template/csv', [ClientBroadcastController::class, 'downloadCsvTemplate'])->name('broadcasts.template');
     Route::get('broadcasts/template/excel', [ClientBroadcastController::class, 'downloadExcelTemplate'])->name('broadcasts.template-excel');
+
+    Route::get('/bantuan', [BantuanController::class, 'index'])->name('bantuan');
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';

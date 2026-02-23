@@ -47,15 +47,14 @@ class WhatsAppApiService
         $data = $response->json('data', []);
         $connected = (bool) ($data['connected'] ?? false);
         $phoneNumber = $data['phoneNumber'] ?? $data['number'] ?? null;
-
-        // Anggap benar-benar terhubung hanya jika ada nomor (hindari state "tersimpan tapi belum konek")
-        if ($connected && empty($phoneNumber)) {
-            $connected = false;
-        }
+        $needQR = (bool) ($data['needQR'] ?? ! $connected);
+        $statusMessage = $data['message'] ?? $response->json('message') ?? null;
 
         return [
             'success' => true,
             'connected' => $connected,
+            'needQR' => $needQR,
+            'statusMessage' => $statusMessage,
             'data' => $data,
             'qrImageUrl' => $data['qrImageUrl'] ?? $data['qrUrl'] ?? null,
             'status' => $data['status'] ?? null,

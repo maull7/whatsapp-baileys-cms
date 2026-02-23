@@ -21,7 +21,10 @@ class WhatsAppController extends Controller
         $status = [
             'success' => $result['success'],
             'connected' => $result['connected'] ?? false,
+            'needQR' => $result['needQR'] ?? ! ($result['connected'] ?? false),
+            'statusMessage' => $result['statusMessage'] ?? null,
             'phoneNumber' => $result['data']['phoneNumber'] ?? $result['data']['number'] ?? null,
+            'qrImageUrl' => $result['qrImageUrl'] ?? null,
             'error' => $result['error'] ?? null,
         ];
 
@@ -36,7 +39,10 @@ class WhatsAppController extends Controller
         return response()->json([
             'success' => $result['success'],
             'connected' => $result['connected'] ?? false,
+            'needQR' => $result['needQR'] ?? ! ($result['connected'] ?? false),
+            'statusMessage' => $result['statusMessage'] ?? null,
             'phoneNumber' => $result['data']['phoneNumber'] ?? $result['data']['number'] ?? null,
+            'qrImageUrl' => $result['qrImageUrl'] ?? null,
         ]);
     }
 
